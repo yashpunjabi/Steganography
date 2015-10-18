@@ -1,11 +1,11 @@
 package com.goobers.steganography;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import com.software.shell.fab.ActionButton;
 
 public class MainActivity extends Activity {
 
@@ -37,11 +37,11 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void encode(View v) {
-
+    public void encode(View v) {
+        startActivity(new Intent(this, EncodeActivity.class));
     }
 
-    private void decode(View v) {
-
+    public void decode(View v) {
+        //startActivity(new Intent(this, DecodeActivity.class));
     }
 }

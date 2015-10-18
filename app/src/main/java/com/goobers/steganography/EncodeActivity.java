@@ -9,7 +9,7 @@ import com.software.shell.fab.ActionButton;
 
 import java.io.File;
 
-public class Encode extends Activity {
+public class EncodeActivity extends Activity {
 
     private File baseImage;
     private File secretImage;
@@ -45,15 +45,15 @@ public class Encode extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void uploadImage1(View v) {
+    protected void uploadImage1(View v) {
 
     }
 
-    private void uploadImage2(View v) {
+    protected void uploadImage2(View v) {
 
     }
 
-    private void encode() {
+    protected void encode(View v) {
 
     }
 }
