@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Calendar;
 
 public class ImageActivity extends Activity {
 
@@ -28,8 +29,12 @@ public class ImageActivity extends Activity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Bitmap bitmap = BitmapFactory.decodeFile(displayPath);
         imageView.setImageBitmap(bitmap);
+        Calendar calendar = Calendar.getInstance();
+        String name = "" + calendar.get(Calendar.YEAR) + calendar.get(Calendar.MONTH) + calendar.get
+                (Calendar.DATE) + calendar.get(Calendar.HOUR) + calendar.get(Calendar.MINUTE)
+                + calendar.get(Calendar.SECOND);
         File tempFile = new File(Environment.getExternalStorageDirectory().getPath() +
-                "/Pictures/Screenshots/swag.png");
+                "/Pictures/Screenshots/" + name + ".png");
         try {
             tempFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(tempFile);

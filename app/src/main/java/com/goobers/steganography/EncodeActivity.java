@@ -34,9 +34,6 @@ public class EncodeActivity extends Activity {
         actionButton.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
 
         encodedTempImage = new File(getFilesDir(), "temp.png");
-        encodedTempImage.setWritable(true);
-        encodedTempImage.setReadable(true);
-        encodedTempImage.setExecutable(true);
     }
 
     @Override
