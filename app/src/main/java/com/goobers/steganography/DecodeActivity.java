@@ -10,12 +10,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class DecodeActivity extends Activity {
 
     private File image;
+    private File decoded = new File(getCacheDir(), "temp.png");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,5 +90,12 @@ public class DecodeActivity extends Activity {
         return uri.getPath();
     }
 
-
+    public void nextPage(View v) {
+        if (image == null) {
+            Toast.makeText(getApplicationContext(), "You need to pick an image", Toast
+                    .LENGTH_SHORT).show();
+        } else {
+            EndEncoder.decode(image, decoded);
+        }
+    }
 }

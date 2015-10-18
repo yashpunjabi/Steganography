@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.software.shell.fab.ActionButton;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class EncodeActivity extends Activity {
     private File baseImage;
     private boolean isBase = true;
     private File secretImage;
+    private File encodedTempImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,8 @@ public class EncodeActivity extends Activity {
 
         ActionButton actionButton = (ActionButton) findViewById(R.id.fab_encode);
         actionButton.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
+
+        encodedTempImage = new File(getCacheDir(), "temp.png");
     }
 
     @Override
@@ -112,8 +116,11 @@ public class EncodeActivity extends Activity {
 
     public void encode(View v) {
         if (baseImage != null && secretImage != null) {
-            //encode logic using Ian's code
-            //open new image intent
+            Encoder.encode(baseImage, secretImage, encodedTempImage);
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "You need two images", Toast
+                    .LENGTH_SHORT);
+            toast.show();
         }
     }
 }

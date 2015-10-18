@@ -10,14 +10,14 @@ import java.util.ArrayList;
 
 public class Encoder {
 
-    public static File encode(File img, File file, File encoded) {
-        Pic image = new Pic(img.getPath());
+    public static File encode(File base, File secret, File encoded) {
+        Pic image = new Pic(base.getPath());
         try {
 
 
-            byte[] byteArray = new byte[(int) file.length()];
+            byte[] byteArray = new byte[(int) secret.length()];
             try {
-                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(secret));
                 buf.read(byteArray, 0, byteArray.length);
                 buf.close();
             } catch (Exception e) {
@@ -33,7 +33,7 @@ public class Encoder {
 
             ArrayList<Pixel> pixels = new ArrayList<Pixel>();
             if (numBitsPossible < (bitString.length() + 32)) {
-                return EndEncoder.encode(img, file, encoded);
+                return EndEncoder.encode(base, secret, encoded);
             }
             for (int i = 0; i < pix.length; i++) {
                 for (int j = 0; j < pix[0].length; j++) {
