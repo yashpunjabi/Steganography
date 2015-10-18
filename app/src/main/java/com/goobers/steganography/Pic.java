@@ -17,7 +17,7 @@ public class Pic {
     public Pic(String imageName) {
         try {
             file = new File(imageName);
-            buff = BitmapFactory.decodeFile(file.getPath());
+            buff = BitmapFactory.decodeFile(file.getPath()).copy(Bitmap.Config.ARGB_8888, true);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Silly goose! That's not a valid file name.");
@@ -68,6 +68,7 @@ public class Pic {
         }
         FileOutputStream out = new FileOutputStream(file);
         buff.compress(Bitmap.CompressFormat.PNG, 100, out);
+        out.flush();
         out.close();
     }
 
