@@ -76,9 +76,6 @@ public class DecodeActivity extends Activity {
         }
     }
 
-    /**
-     * helper to retrieve the path of an image URI
-     */
     public String getPath(Uri uri) {
         // just some safety built in
         if( uri == null ) {
