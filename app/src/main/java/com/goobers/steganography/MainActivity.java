@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import com.software.shell.fab.ActionButton;
 
 public class MainActivity extends Activity {
@@ -12,10 +13,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ActionButton actionButton = (ActionButton) findViewById(R.id.fab);
-        actionButton.setImageResource(R.drawable.fab_plus_icon);
-        actionButton.playShowAnimation();
     }
 
     @Override
@@ -38,5 +35,13 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void encode(View v) {
+
+    }
+
+    private void decode(View v) {
+
     }
 }
