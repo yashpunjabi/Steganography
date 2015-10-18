@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class ImageActivity extends Activity {
 
@@ -24,7 +28,17 @@ public class ImageActivity extends Activity {
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Bitmap bitmap = BitmapFactory.decodeFile(displayPath);
         imageView.setImageBitmap(bitmap);
-        Log.wtf("GOOBER GOOBER GOOBER", "" + imageView.getVisibility() + " DP" + displayPath);
+        File tempFile = new File(Environment.getExternalStorageDirectory().getPath() +
+                "/Pictures/Screenshots/swag.png");
+        try {
+            tempFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            Log.e("GOOBER GOOBER GOOBER", e.getMessage());
+        }
     }
 
     @Override

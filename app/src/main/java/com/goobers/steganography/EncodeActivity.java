@@ -126,6 +126,7 @@ public class EncodeActivity extends Activity {
             Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
                     Toast.LENGTH_SHORT);
             toast.show();
+            baseImage = PNGConverter.convert(baseImage, getFilesDir().getPath());
             File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
             Intent intent = new Intent(this, ImageActivity.class);
             intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());

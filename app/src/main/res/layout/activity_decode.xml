@@ -31,6 +31,7 @@
         android:onClick="nextPage"
         app:button_color="@color/fab_material_pink_500"
         app:button_colorPressed="@color/fab_material_pink_900"
+        app:image="@drawable/ic_arrow_forward_black_24dp"
         app:rippleEffect_enabled="true"
         />
 </RelativeLayout>

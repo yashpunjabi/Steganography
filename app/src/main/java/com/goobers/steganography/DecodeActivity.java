@@ -3,6 +3,8 @@ package com.goobers.steganography;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,12 +19,13 @@ import java.io.File;
 public class DecodeActivity extends Activity {
 
     private File image;
-    private File decoded = new File(getFilesDir(), "temp.png");
+    private File decoded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decode);
+        decoded = new File(getFilesDir(), "temp.png");
     }
 
     @Override
@@ -90,13 +93,17 @@ public class DecodeActivity extends Activity {
         return uri.getPath();
     }
 
+    public static final String DECODED_FILE_PATH = "ENCODED FILE";
+
     public void nextPage(View v) {
         if (image == null) {
             Toast.makeText(getApplicationContext(), "You need to pick an image", Toast
                     .LENGTH_SHORT).show();
         } else {
-            EndEncoder.decode(image, decoded);
-            startActivity(new Intent(this, ImageActivity.class));
+            decoded = EndEncoder.decode(image, decoded);
+            Intent intent = new Intent(this, ImageActivity.class);
+            intent.putExtra(DECODED_FILE_PATH, decoded.getPath());
+            startActivity(intent);
         }
     }
 }
