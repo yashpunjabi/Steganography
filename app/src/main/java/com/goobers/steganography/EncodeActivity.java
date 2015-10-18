@@ -3,6 +3,8 @@ package com.goobers.steganography;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.google.gson.Gson;
 import com.software.shell.fab.ActionButton;
 
 import java.io.File;
@@ -30,7 +33,10 @@ public class EncodeActivity extends Activity {
         ActionButton actionButton = (ActionButton) findViewById(R.id.fab_encode);
         actionButton.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
 
-        encodedTempImage = new File(getCacheDir(), "temp.png");
+        encodedTempImage = new File(getFilesDir(), "temp.png");
+        encodedTempImage.setWritable(true);
+        encodedTempImage.setReadable(true);
+        encodedTempImage.setExecutable(true);
     }
 
     @Override
@@ -113,10 +119,17 @@ public class EncodeActivity extends Activity {
         return uri.getPath();
     }
 
+    public static final String EXTRA_FILE_TAG = "ENCODED FILE";
 
-    public void encode(View v) {
+    public void encodeImage(View v) {
         if (baseImage != null && secretImage != null) {
-            Encoder.encode(baseImage, secretImage, encodedTempImage);
+            Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
+                    Toast.LENGTH_SHORT);
+            toast.show();
+            File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
+            Intent intent = new Intent(this, ImageActivity.class);
+            intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
+            startActivity(intent);
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), "You need two images", Toast
                     .LENGTH_SHORT);

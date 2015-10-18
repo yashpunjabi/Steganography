@@ -17,7 +17,7 @@ import java.io.File;
 public class DecodeActivity extends Activity {
 
     private File image;
-    private File decoded = new File(getCacheDir(), "temp.png");
+    private File decoded = new File(getFilesDir(), "temp.png");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +96,7 @@ public class DecodeActivity extends Activity {
                     .LENGTH_SHORT).show();
         } else {
             EndEncoder.decode(image, decoded);
+            startActivity(new Intent(this, ImageActivity.class));
         }
     }
 }

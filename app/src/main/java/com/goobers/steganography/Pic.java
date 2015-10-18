@@ -68,6 +68,7 @@ public class Pic {
         }
         FileOutputStream out = new FileOutputStream(file);
         buff.compress(Bitmap.CompressFormat.PNG, 100, out);
+        out.close();
     }
 
     public File getFile() {

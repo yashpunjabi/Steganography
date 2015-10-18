@@ -1,5 +1,8 @@
 package com.goobers.steganography;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +31,8 @@ public class Encoder {
             int numBitsPossible = ((pix.length * pix[0].length) * 3);
             StringBuilder bitString = new StringBuilder();
             for (byte element: byteArray) {
-                bitString.append(String.format("%8s", Integer.toBinaryString(element & 0xFF)).replace(' ', '0'));
+                bitString.append(String.format("%8s", Integer.toBinaryString(element & 0xFF))
+                        .replace(' ', '0'));
             }
 
             ArrayList<Pixel> pixels = new ArrayList<Pixel>();
