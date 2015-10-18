@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.goobers.steganography" >
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,6 +19,14 @@
         <activity
             android:name=".EncodeActivity"
             android:label="@string/title_activity_encode" >
+        </activity>
+        <activity
+            android:name=".DecodeActivity"
+            android:label="@string/title_activity_decode"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.goobers.steganography.MainActivity" />
         </activity>
     </application>
 

@@ -42,6 +42,7 @@
         android:onClick="encode"
         app:button_color="@color/fab_material_pink_500"
         app:button_colorPressed="@color/fab_material_pink_900"
+        app:rippleEffect_enabled="true"
         />
 
 </RelativeLayout>

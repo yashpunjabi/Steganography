@@ -6,6 +6,8 @@
     <string name="title_activity_encode">Encode</string>
     <string name="upload_image1">Upload the Base Image</string>
     <string name="upload_image2">Upload the Secret Image</string>
+    <string name="decode_image">Upload the Image to decode</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_decode">DecodeActivity</string>
 </resources>

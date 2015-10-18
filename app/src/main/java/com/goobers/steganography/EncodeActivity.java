@@ -1,7 +1,12 @@
 package com.goobers.steganography;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +17,7 @@ import java.io.File;
 public class EncodeActivity extends Activity {
 
     private File baseImage;
+    private boolean isBase = true;
     private File secretImage;
 
     @Override
@@ -45,15 +51,69 @@ public class EncodeActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void uploadImage1(View v) {
-
+    public void uploadImage1(View v) {
+        isBase = true;
+        uploadImage();
     }
 
-    protected void uploadImage2(View v) {
-
+    public void uploadImage2(View v) {
+        isBase = false;
+        uploadImage();
     }
 
-    protected void encode(View v) {
+    public static final int SELECT_PICTURE = 1; //for the result listener
+    private String selectedImagePath;
 
+    private void uploadImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                "Select Picture"), SELECT_PICTURE);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                selectedImagePath = getPath(selectedImageUri);
+            }
+            if (isBase) {
+                baseImage = new File(selectedImagePath);
+            } else {
+                secretImage = new File(selectedImagePath);
+            }
+        }
+    }
+
+
+    /**
+     * helper to retrieve the path of an image URI
+     */
+    public String getPath(Uri uri) {
+        // just some safety built in
+        if( uri == null ) {
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if( cursor != null ) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
+
+    public void encode(View v) {
+        if (baseImage != null && secretImage != null) {
+            //encode logic using Ian's code
+            //open new image intent
+        }
     }
 }
