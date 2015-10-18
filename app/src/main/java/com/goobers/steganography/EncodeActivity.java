@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.google.gson.Gson;
 import com.software.shell.fab.ActionButton;
@@ -24,6 +25,8 @@ public class EncodeActivity extends Activity {
     private boolean isBase = true;
     private File secretImage;
     private File encodedTempImage;
+    private ImageView baseView;
+    private ImageView secretView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class EncodeActivity extends Activity {
         actionButton.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
 
         encodedTempImage = new File(getFilesDir(), "temp.png");
+        baseView = (ImageView) findViewById(R.id.imageViewBase);
+        secretView = (ImageView) findViewById(R.id.imageViewSecret);
     }
 
     @Override
@@ -87,8 +92,10 @@ public class EncodeActivity extends Activity {
             }
             if (isBase) {
                 baseImage = new File(selectedImagePath);
+                baseView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
             } else {
                 secretImage = new File(selectedImagePath);
+                secretView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
             }
         }
     }

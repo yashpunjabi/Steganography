@@ -16,9 +16,18 @@
         android:layout_height="wrap_content"
         android:text="@string/decode_image"
         android:id="@+id/button"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="decode"/>
+        android:onClick="decode"
+        android:layout_above="@+id/fab_decode"
+        android:layout_centerHorizontal="true" />
+
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imageViewDecode"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/button" />
 
     <com.software.shell.fab.ActionButton
         android:id="@+id/fab_decode"

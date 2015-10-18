@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -20,12 +22,14 @@ public class DecodeActivity extends Activity {
 
     private File image;
     private File decoded;
+    private ImageView decodedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decode);
         decoded = new File(getFilesDir(), "temp.png");
+        decodedView = (ImageView) findViewById(R.id.imageViewDecode);
     }
 
     @Override
@@ -68,6 +72,7 @@ public class DecodeActivity extends Activity {
                 selectedImagePath = getPath(selectedImageUri);
             }
             image = new File(selectedImagePath);
+            decodedView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
         }
     }
 

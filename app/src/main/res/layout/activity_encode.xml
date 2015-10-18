@@ -31,6 +31,20 @@
         android:onClick="uploadImage2"
         />
 
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imageViewBase"
+        android:layout_above="@+id/button_get_image1"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imageViewSecret"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/button_get_image2" />
+
     <com.software.shell.fab.ActionButton
         android:id="@+id/fab_encode"
         android:layout_width="wrap_content"
