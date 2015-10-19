@@ -1,7 +1,5 @@
 package com.goobers.steganography;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 
 
 public class Encoder {
-
+    public static final int OVERHEAD_SIZE = 32;
     public static File encode(File base, File secret, File encoded) {
         Pic image = new Pic(base.getPath());
         try {
@@ -35,41 +33,74 @@ public class Encoder {
                         .replace(' ', '0'));
             }
 
-            ArrayList<Pixel> pixels = new ArrayList<Pixel>();
-            if (numBitsPossible < (bitString.length() + 32)) {
+            if (numBitsPossible < (bitString.length() + OVERHEAD_SIZE)) {
                 return EndEncoder.encode(base, secret, encoded);
             }
+
+            ArrayList<Pixel> pixels = new ArrayList<>();
             for (int i = 0; i < pix.length; i++) {
                 for (int j = 0; j < pix[0].length; j++) {
-                    pix[i][j].setRed(pix[i][j].getRed() | 0x1);
-                    pix[i][j].setBlue(pix[i][j].getBlue() | 0x1);
-                    pix[i][j].setGreen(pix[i][j].getGreen() | 0x1);
                     pixels.add(pix[i][j]);
                 }
             }
 
-            byte[] length = ByteBuffer.allocate(4).putInt(byteArray.length).array();
-            StringBuilder numString = new StringBuilder();
-            for (byte element: length) {
-                numString.append(String.format("%8s", Integer.toBinaryString(element & 0xFF)).replace(' ', '0'));
-            }
-            int pixelCount = 0;
-            for (int i = 0; i < numString.length(); i++) {
-                if (i % 3 == 0) {
-                    if (numString.charAt(i) == '0') {
-                        pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() & 0xFE);
-                    }
-                } else if (i % 3 == 1) {
-                    if (numString.charAt(i) == '0') {
-                        pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() & 0xFE);
-                    }
-                } else {
-                    if (numString.charAt(i) == '0') {
-                        pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() & 0xFE);
-                    }
-                    pixelCount++;
-                }
 
+            int pixelCount = 0;
+
+            byte[] overhead = ByteBuffer.allocate(4).putInt(byteArray.length).array();
+//            StringBuilder numString = new StringBuilder();
+//            for (byte element: overhead) {
+//                numString.append(String.format("%8s", Integer.toBinaryString(element & 0xFF)).replace(' ', '0'));
+//            }
+//            for (int i = 0; i < numString.length(); i++) {
+//                if (i % 3 == 0) {
+//                    if (numString.charAt(i) == '0') {
+//                        pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() & 0xFE);
+//                    } else {
+//                        pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() | 0x1);
+//                    }
+//                } else if (i % 3 == 1) {
+//                    if (numString.charAt(i) == '0') {
+//                        pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() & 0xFE);
+//                    } else {
+//                        pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() | 0x1);
+//                    }
+//                } else {
+//                    if (numString.charAt(i) == '0') {
+//                        pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() & 0xFE);
+//                    } else {
+//                        pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() | 0x1);
+//                    }
+//                    pixelCount++;
+//                }
+//
+//            }
+
+            for (int i = 0; i < overhead.length; i++) {
+                byte currentByte = overhead[i];
+                for (int j = 0; j < 8; j++) {
+                    int bit = (currentByte & (0x1 << (8 - (j + 1)))) >> (8 - (j + 1));
+                    if (j % 3 == 0) {
+                        if (bit == 0) {
+                            pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() & 0xFE);
+                        } else {
+                            pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() | 0x1);
+                        }
+                    } else if (j % 3 == 1) {
+                        if (bit == 0) {
+                            pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() & 0xFE);
+                        } else {
+                            pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() | 0x1);
+                        }
+                    } else {
+                        if (bit == 0) {
+                            pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() & 0xFE);
+                        } else {
+                            pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() | 0x1);
+                        }
+                        pixelCount++;
+                    }
+                }
             }
             pixelCount++;
 
@@ -78,18 +109,23 @@ public class Encoder {
                 if (i % 3 == 0) {
                     if (bitString.charAt(i) == '0') {
                         pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() & 0xFE);
+                    } else {
+                        pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() | 0x1);
                     }
                 } else if (i % 3 == 1) {
                     if (bitString.charAt(i) == '0') {
                         pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() & 0xFE);
+                    } else {
+                        pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() | 0x1);
                     }
                 } else {
                     if (bitString.charAt(i) == '0') {
                         pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() & 0xFE);
+                    } else {
+                        pixels.get(pixelCount).setGreen(pixels.get(pixelCount).getGreen() | 0x1);
                     }
                     pixelCount++;
                 }
-
             }
             image.save(encoded);
             System.out.println(" " + (byteArray.length + 4) + " bytes hidden");
