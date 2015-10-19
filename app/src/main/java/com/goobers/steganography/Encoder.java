@@ -16,6 +16,8 @@ public class Encoder {
     private static int pixelRow = 0;
     private static int pixelCol = 0;
     public static File encode(File base, File secret, File encoded) {
+        pixelRow = 0;
+        pixelCol = 0;
         Pic image = new Pic(base.getPath());
         try {
 
@@ -114,80 +116,55 @@ public class Encoder {
     }
 
     public static File decode(File image, File decoded) {
+        pixelCol = 0;
+        pixelRow = 0;
         Pic toDecode = new Pic(image.getPath());
         try {
-            ArrayList<Byte> bytes = new ArrayList<Byte>();
             Pixel[][] pix = toDecode.getPixels();
-            ArrayList<Pixel> pixels = new ArrayList<Pixel>();
-
-            for (Pixel[] array: pix) {
-                for (Pixel element: array) {
-                    pixels.add(element);
-                }
-            }
-
             int numBytes = 0x0;
-            int pixelCount = 0;
+
             for (int i = 0; i < 32; i++) {
                 if (i % 3 == 0) {
-                    if ((pixels.get(pixelCount).getRed() & 0x1) == 0x1) {
+                    if ((pix[pixelRow][pixelCol].getRed() & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
                 } else if (i % 3 == 1) {
-                    if ((pixels.get(pixelCount).getBlue() & 0x1) == 0x1) {
+                    if ((pix[pixelRow][pixelCol].getBlue() & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
                 } else {
-                    if ((pixels.get(pixelCount).getGreen() & 0x1) == 0x1) {
+                    if ((pix[pixelRow][pixelCol].getGreen() & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
-                    pixelCount++;
+                    incrementPixel(pix[0].length);
                 }
             }
-            pixelCount++;
+            incrementPixel(pix[0].length);
+            int bitcount = 0;
+            byte[] byteArray = new byte[numBytes];
 
-
-            StringBuilder byteString = new StringBuilder();
-            for (int i = 0; i < numBytes * 8; i++) {
-                if (i % 3 == 0) {
-                    if ((pixels.get(pixelCount).getRed() & 0x1) == 0x1) {
-                        byteString.append('1');
+            for (int i = 0; i < numBytes; i++) {
+                int current = 0;
+                for (int j = 7; j >= 0; j--) {
+                    if (bitcount % 3 == 0) {
+                        if ((pix[pixelRow][pixelCol].getRed() & 0x1) == 0x1) {
+                            current = current | (0x1 << j);
+                        }
+                    } else if (bitcount % 3 == 1) {
+                        if ((pix[pixelRow][pixelCol].getBlue() & 0x1) == 0x1) {
+                            current = current | (0x1 << j);
+                        }
                     } else {
-                        byteString.append('0');
+                        if ((pix[pixelRow][pixelCol].getGreen() & 0x1) == 0x1) {
+                            current = current | (0x1 << j);
+                        }
+                        incrementPixel(pix[0].length);
                     }
-                } else if (i % 3 == 1) {
-                    if ((pixels.get(pixelCount).getBlue() & 0x1) == 0x1) {
-                        byteString.append('1');
-                    } else {
-                        byteString.append('0');
-                    }
-                } else {
-                    if ((pixels.get(pixelCount).getGreen() & 0x1) == 0x1) {
-                        byteString.append('1');
-                    } else {
-                        byteString.append('0');
-                    }
-                    pixelCount++;
+                    bitcount++;
                 }
+                byteArray[i] = (byte) current;
             }
 
-            for (int i = 0; i < byteString.length() / 8; i++) {
-                String subString = byteString.substring(i * 8, (i * 8) + 8);
-                int info = 0x0;
-                for (int j = 0; j < subString.length(); j++) {
-                    if (subString.charAt(j) == '1') {
-                        info = info | (0x1 << (7 - j));
-                    }
-                }
-                byte[] byteInfo = ByteBuffer.allocate(4).putInt(info).array();
-                bytes.add(byteInfo[3]);
-            }
-
-
-            byte[] byteArray = new byte[bytes.size()];
-            for (int i = 0; i < byteArray.length; i++) {
-                byteArray[i] = bytes.get(i);
-            }
             System.out.println(" " + (numBytes + 4) + " bytes found");
             FileOutputStream out = new FileOutputStream(decoded);
             out.write(byteArray);

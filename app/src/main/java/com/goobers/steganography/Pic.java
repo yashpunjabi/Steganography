@@ -36,6 +36,7 @@ public class Pic {
                 pixels[row][col] = new Pixel(r, g, b, a);
             }
         }
+
     }
 
 
