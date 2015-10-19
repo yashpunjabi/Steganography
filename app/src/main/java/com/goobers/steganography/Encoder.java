@@ -75,18 +75,18 @@ public class Encoder {
 //                }
 //
 //            }
-
+            int bitCount = 0;
             for (int i = 0; i < overhead.length; i++) {
                 byte currentByte = overhead[i];
-                for (int j = 0; j < 8; j++) {
-                    int bit = (currentByte & (0x1 << (8 - (j + 1)))) >> (8 - (j + 1));
-                    if (j % 3 == 0) {
+                for (int j = 7; j >= 0; j--) {
+                    int bit = (currentByte & (0x1 << j)) >> j;
+                    if (bitCount % 3 == 0) {
                         if (bit == 0) {
                             pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() & 0xFE);
                         } else {
                             pixels.get(pixelCount).setRed(pixels.get(pixelCount).getRed() | 0x1);
                         }
-                    } else if (j % 3 == 1) {
+                    } else if (bitCount % 3 == 1) {
                         if (bit == 0) {
                             pixels.get(pixelCount).setBlue(pixels.get(pixelCount).getBlue() & 0xFE);
                         } else {
@@ -100,6 +100,7 @@ public class Encoder {
                         }
                         pixelCount++;
                     }
+                    bitCount++;
                 }
             }
             pixelCount++;
