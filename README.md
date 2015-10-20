@@ -3,7 +3,7 @@ An android app to hide files within other files
 
 Initial Screen
 
-![Initial Screen](./readme_res/Screenshot_2015-10-18-09-45-48.png width=360 height=640)
+![Initial Screen](./readme_res/Screenshot_2015-10-18-09-45-48.png =360x640)
 
 Encoding Screen
 
