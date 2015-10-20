@@ -9,8 +9,6 @@ public class EndEncoder {
 
     public static File encode(File image, File toEncode, File encoded) {
         try {
-
-
             byte[] imageBinary = new byte[(int) image.length()];
             try {
                 BufferedInputStream buf = new BufferedInputStream(new FileInputStream(image));
@@ -54,7 +52,7 @@ public class EndEncoder {
         }
         return encoded;
     }
-    public static File decode(File file, File decoded) {
+    public static File decode(File file, File decoded) throws OutOfMemoryError{
         byte[] bytes;
         try {
 

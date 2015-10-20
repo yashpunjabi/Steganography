@@ -123,14 +123,20 @@ public class EncodeActivity extends Activity {
 
     public void encodeImage(View v) {
         if (baseImage != null && secretImage != null) {
-            Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
-                    Toast.LENGTH_SHORT);
-            toast.show();
-            baseImage = PNGConverter.convert(baseImage, getFilesDir().getPath());
-            File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
-            Intent intent = new Intent(this, ImageActivity.class);
-            intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
-            startActivity(intent);
+            try {
+                Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+                baseImage = PNGConverter.convert(baseImage, getFilesDir().getPath());
+                File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
+                startActivity(intent);
+            } catch (OutOfMemoryError e) {
+                Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
+                        .LENGTH_SHORT);
+                toast.show();
+            }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), "You need two images", Toast
                     .LENGTH_SHORT);

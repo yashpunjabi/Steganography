@@ -1,27 +1,28 @@
 package com.goobers.steganography;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 
 public class Encoder {
     public static final int OVERHEAD_SIZE = 32;
-    private static int pixelRow = 0;
-    private static int pixelCol = 0;
-    public static File encode(File base, File secret, File encoded) {
+    private static int pixelRow;
+    private static int pixelCol;
+    public static File encode(File base, File secret, File encoded) throws OutOfMemoryError{
         pixelRow = 0;
         pixelCol = 0;
-        Pic image = new Pic(base.getPath());
         try {
-
-
+            Bitmap buffer = BitmapFactory.decodeFile(base.getPath()).copy(Bitmap.Config.ARGB_8888, true);
             byte[] byteArray = new byte[(int) secret.length()];
             try {
                 BufferedInputStream buf = new BufferedInputStream(new FileInputStream(secret));
@@ -31,12 +32,10 @@ public class Encoder {
                 e.printStackTrace();
             }
 
-            Pixel[][] pix = image.getPixels();
-            int numBitsPossible = ((pix.length * pix[0].length) * 3);
+            int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
             if (numBitsPossible < ((byteArray.length * 8) + OVERHEAD_SIZE)) {
                 return EndEncoder.encode(base, secret, encoded);
             }
-            Log.wtf("YASH IS A GOOBER", "Fuckyeah we did it");
             byte[] overhead = ByteBuffer.allocate(4).putInt(byteArray.length).array();
 
             int bitCount = 0;
@@ -46,29 +45,44 @@ public class Encoder {
                     int bit = (currentByte & (0x1 << j)) >> j;
                     bit = bit & 0x1;
                     if (bitCount % 3 == 0) {
+                        int red;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setRed(pix[pixelRow][pixelCol].getRed() & 0xFE);
+                            red = Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setRed(pix[pixelRow][pixelCol].getRed() | 0x1);
+                            red = Color.red(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)), red,
+                                Color.green(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.blue(buffer.getPixel(pixelCol, pixelRow))));
                     } else if (bitCount % 3 == 1) {
+                        int blue;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setBlue(pix[pixelRow][pixelCol].getBlue() & 0xFE);
+                            blue = Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setBlue(pix[pixelRow][pixelCol].getBlue() | 0x1);
+                            blue = Color.blue(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.red(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.green(buffer.getPixel(pixelCol, pixelRow)), blue));
                     } else {
+                        int green;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setGreen(pix[pixelRow][pixelCol].getGreen() & 0xFE);
+                            green = Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setGreen(pix[pixelRow][pixelCol].getGreen() | 0x1);
+                            green = Color.green(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
-                        incrementPixel(pix[0].length);
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.red(buffer.getPixel(pixelCol, pixelRow)), green,
+                                Color.blue(buffer.getPixel(pixelCol, pixelRow))));
+                        incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
                 }
             }
-            incrementPixel(pix[0].length);
+            incrementPixel(buffer.getWidth());
 
 
             bitCount = 0;
@@ -78,32 +92,51 @@ public class Encoder {
                     int bit = (currentByte & (0x1 << j)) >> j;
                     bit = bit & 0x1;
                     if (bitCount % 3 == 0) {
+                        int red;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setRed(pix[pixelRow][pixelCol].getRed() & 0xFE);
+                            red = Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setRed(pix[pixelRow][pixelCol].getRed() | 0x1);
+                            red = Color.red(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)), red,
+                                Color.green(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.blue(buffer.getPixel(pixelCol, pixelRow))));
                     } else if (bitCount % 3 == 1) {
+                        int blue;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setBlue(pix[pixelRow][pixelCol].getBlue() & 0xFE);
+                            blue = Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setBlue(pix[pixelRow][pixelCol].getBlue() | 0x1);
+                            blue = Color.blue(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.red(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.green(buffer.getPixel(pixelCol, pixelRow)), blue));
                     } else {
+                        int green;
                         if (bit == 0) {
-                            pix[pixelRow][pixelCol].setGreen(pix[pixelRow][pixelCol].getGreen() & 0xFE);
+                            green = Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0xFE;
                         } else {
-                            pix[pixelRow][pixelCol].setGreen(pix[pixelRow][pixelCol].getGreen() | 0x1);
+                            green = Color.green(buffer.getPixel(pixelCol, pixelRow)) | 0x1;
                         }
-                        incrementPixel(pix[0].length);
+                        buffer.setPixel(pixelCol, pixelRow, Color.argb(
+                                Color.alpha(buffer.getPixel(pixelCol, pixelRow)),
+                                Color.red(buffer.getPixel(pixelCol, pixelRow)), green,
+                                Color.blue(buffer.getPixel(pixelCol, pixelRow))));
+                        incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
                 }
             }
-            image.save(encoded);
-            System.out.println(" " + (byteArray.length + 4) + " bytes hidden");
+            FileOutputStream out = new FileOutputStream(encoded);
+            buffer.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (OutOfMemoryError e) {
+            throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.wtf("Goober", e.getMessage());
         }
         return encoded;
     }
@@ -115,67 +148,65 @@ public class Encoder {
         }
     }
 
-    public static File decode(File image, File decoded) {
+    public static File decode(File image, File decoded) throws OutOfMemoryError{
         pixelCol = 0;
         pixelRow = 0;
-        Pic toDecode = new Pic(image.getPath());
         try {
-            Pixel[][] pix = toDecode.getPixels();
+            Bitmap buffer = BitmapFactory.decodeFile(image.getPath()).copy(Bitmap.Config.ARGB_8888, true);
             int numBytes = 0x0;
 
             for (int i = 0; i < 32; i++) {
                 if (i % 3 == 0) {
-                    if ((pix[pixelRow][pixelCol].getRed() & 0x1) == 0x1) {
+                    if ((Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
                 } else if (i % 3 == 1) {
-                    if ((pix[pixelRow][pixelCol].getBlue() & 0x1) == 0x1) {
+                    if ((Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
                 } else {
-                    if ((pix[pixelRow][pixelCol].getGreen() & 0x1) == 0x1) {
+                    if ((Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                         numBytes = numBytes | (0x1 << (31 - i));
                     }
-                    incrementPixel(pix[0].length);
+                    incrementPixel(buffer.getWidth());
                 }
             }
-            incrementPixel(pix[0].length);
+
+            incrementPixel(buffer.getWidth());
             int bitcount = 0;
             byte[] byteArray = new byte[numBytes];
-
             for (int i = 0; i < numBytes; i++) {
                 int current = 0;
                 for (int j = 7; j >= 0; j--) {
                     if (bitcount % 3 == 0) {
-                        if ((pix[pixelRow][pixelCol].getRed() & 0x1) == 0x1) {
+                        if ((Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                             current = current | (0x1 << j);
                         }
                     } else if (bitcount % 3 == 1) {
-                        if ((pix[pixelRow][pixelCol].getBlue() & 0x1) == 0x1) {
+                        if ((Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                             current = current | (0x1 << j);
                         }
                     } else {
-                        if ((pix[pixelRow][pixelCol].getGreen() & 0x1) == 0x1) {
+                        if ((Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
                             current = current | (0x1 << j);
                         }
-                        incrementPixel(pix[0].length);
+                        incrementPixel(buffer.getWidth());
                     }
                     bitcount++;
                 }
                 byteArray[i] = (byte) current;
             }
 
-            System.out.println(" " + (numBytes + 4) + " bytes found");
             FileOutputStream out = new FileOutputStream(decoded);
             out.write(byteArray);
             out.flush();
             out.close();
+        } catch (OutOfMemoryError e) {
+            throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.wtf("Goober", e.getMessage());
         }
         return decoded;
     }
-
-
 
 }

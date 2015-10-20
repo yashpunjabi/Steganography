@@ -102,10 +102,16 @@ public class DecodeActivity extends Activity {
             Toast.makeText(getApplicationContext(), "You need to pick an image", Toast
                     .LENGTH_SHORT).show();
         } else {
-            decoded = EndEncoder.decode(image, decoded);
-            Intent intent = new Intent(this, ImageActivity.class);
-            intent.putExtra(DECODED_FILE_PATH, decoded.getPath());
-            startActivity(intent);
+            try {
+                decoded = EndEncoder.decode(image, decoded);
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.putExtra(DECODED_FILE_PATH, decoded.getPath());
+                startActivity(intent);
+            } catch (OutOfMemoryError e) {
+                Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
+                        .LENGTH_SHORT);
+                toast.show();
+            }
         }
     }
 }
