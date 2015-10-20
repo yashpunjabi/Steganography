@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileNotFoundException;

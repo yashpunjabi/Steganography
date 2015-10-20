@@ -9,8 +9,6 @@ public class EndEncoder {
 
     public static File encode(File image, File toEncode, File encoded) {
         try {
-
-
             byte[] imageBinary = new byte[(int) image.length()];
             try {
                 BufferedInputStream buf = new BufferedInputStream(new FileInputStream(image));
@@ -49,12 +47,14 @@ public class EndEncoder {
             out.flush();
             out.close();
             System.out.println(" " + toEncodeBinary.length + " bytes hidden");
+        } catch (OutOfMemoryError e) {
+          throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
             e.printStackTrace();
         }
         return encoded;
     }
-    public static File decode(File file, File decoded) {
+    public static File decode(File file, File decoded) throws OutOfMemoryError{
         byte[] bytes;
         try {
 
@@ -86,6 +86,8 @@ public class EndEncoder {
             out.flush();
             out.close();
             System.out.println(" " + size + " bytes found");
+        } catch (OutOfMemoryError e) {
+            throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
             return Encoder.decode(file, decoded);
         }
