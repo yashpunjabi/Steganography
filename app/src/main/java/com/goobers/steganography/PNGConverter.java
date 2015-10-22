@@ -31,6 +31,6 @@ public class PNGConverter {
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
         String fileType = URLConnection.guessContentTypeFromStream(in);
         in.close();
-        return fileType;
+        return fileType.toLowerCase();
     }
 }
