@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLConnection;
 
-public class PNGConverter {
+public class FileUtils {
 
     public static File convert(File file, String fileDir) {
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());

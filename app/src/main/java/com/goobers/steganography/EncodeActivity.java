@@ -3,12 +3,10 @@ package com.goobers.steganography;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -127,7 +125,7 @@ public class EncodeActivity extends Activity {
                 Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
                         Toast.LENGTH_SHORT);
                 toast.show();
-                baseImage = PNGConverter.convert(baseImage, getFilesDir().getPath());
+                baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
                 File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
                 Intent intent = new Intent(this, ImageActivity.class);
                 intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
