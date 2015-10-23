@@ -16,8 +16,8 @@ import java.nio.ByteBuffer;
 
 public class EncoderTask extends AsyncTask<File, Integer, File> {
     public static final int OVERHEAD_SIZE = 32;
-    private static int pixelRow;
-    private static int pixelCol;
+    private int pixelRow;
+    private int pixelCol;
 
     @Override
     protected File doInBackground(File... params) {
@@ -130,7 +130,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                         incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
-                    double percent = ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100);
+                    publishProgress((int)((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
                 }
             }
             FileOutputStream out = new FileOutputStream(params[2]);
@@ -160,7 +160,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         super.onPostExecute(file);
     }
 
-    private static void incrementPixel(int length) {
+    private void incrementPixel(int length) {
         pixelCol++;
         if (pixelCol == length) {
             pixelCol = 0;
@@ -168,7 +168,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         }
     }
 
-    public static File decode(File image, File decoded) throws OutOfMemoryError{
+    public File decode(File image, File decoded) throws OutOfMemoryError{
         pixelCol = 0;
         pixelRow = 0;
         try {
