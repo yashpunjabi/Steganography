@@ -15,9 +15,9 @@ import java.nio.ByteBuffer;
 
 
 public class EncoderTask extends AsyncTask<File, Integer, File> {
-    public static final int OVERHEAD_SIZE = 32;
-    private static int pixelRow;
-    private static int pixelCol;
+    public final int OVERHEAD_SIZE = 32;
+    private int pixelRow;
+    private int pixelCol;
 
     @Override
     protected File doInBackground(File... params) {
@@ -160,73 +160,11 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         super.onPostExecute(file);
     }
 
-    private static void incrementPixel(int length) {
+    private void incrementPixel(int length) {
         pixelCol++;
         if (pixelCol == length) {
             pixelCol = 0;
             pixelRow++;
         }
     }
-
-    public static File decode(File image, File decoded) throws OutOfMemoryError{
-        pixelCol = 0;
-        pixelRow = 0;
-        try {
-            Bitmap buffer = BitmapFactory.decodeFile(image.getPath()).copy(Bitmap.Config.ARGB_8888, true);
-            int numBytes = 0x0;
-
-            for (int i = 0; i < 32; i++) {
-                if (i % 3 == 0) {
-                    if ((Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
-                    }
-                } else if (i % 3 == 1) {
-                    if ((Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
-                    }
-                } else {
-                    if ((Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
-                    }
-                    incrementPixel(buffer.getWidth());
-                }
-            }
-
-            incrementPixel(buffer.getWidth());
-            int bitcount = 0;
-            byte[] byteArray = new byte[numBytes];
-            for (int i = 0; i < numBytes; i++) {
-                int current = 0;
-                for (int j = 7; j >= 0; j--) {
-                    if (bitcount % 3 == 0) {
-                        if ((Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                            current = current | (0x1 << j);
-                        }
-                    } else if (bitcount % 3 == 1) {
-                        if ((Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                            current = current | (0x1 << j);
-                        }
-                    } else {
-                        if ((Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                            current = current | (0x1 << j);
-                        }
-                        incrementPixel(buffer.getWidth());
-                    }
-                    bitcount++;
-                }
-                byteArray[i] = (byte) current;
-            }
-
-            FileOutputStream out = new FileOutputStream(decoded);
-            out.write(byteArray);
-            out.flush();
-            out.close();
-        } catch (OutOfMemoryError e) {
-            throw new OutOfMemoryError("Not Enough RAM");
-        } catch (Exception e) {
-            Log.wtf("Goober", e.getMessage());
-        }
-        return decoded;
-    }
-
 }

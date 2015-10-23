@@ -124,7 +124,7 @@ public class EncodeActivity extends Activity {
         if (baseImage != null && secretImage != null) {
             try {
                 baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
-                AsyncTask<File, Integer, File> thread = new EncodeTask().execute(baseImage,
+                AsyncTask<File, Integer, File> thread = new EncoderTask().execute(baseImage,
                         secretImage, encodedTempImage);
                 Intent intent = new Intent(this, ImageActivity.class);
                 intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
