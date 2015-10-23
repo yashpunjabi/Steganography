@@ -46,7 +46,6 @@ public class EndEncoder {
             out.write(bytes);
             out.flush();
             out.close();
-            System.out.println(" " + toEncodeBinary.length + " bytes hidden");
         } catch (OutOfMemoryError e) {
           throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
@@ -85,7 +84,6 @@ public class EndEncoder {
             out.write(decodedBytes);
             out.flush();
             out.close();
-            System.out.println(" " + size + " bytes found");
         } catch (OutOfMemoryError e) {
             throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
