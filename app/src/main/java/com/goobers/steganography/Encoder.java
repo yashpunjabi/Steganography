@@ -4,6 +4,7 @@ package com.goobers.steganography;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -17,7 +18,7 @@ public class Encoder {
     public static final int OVERHEAD_SIZE = 32;
     private static int pixelRow;
     private static int pixelCol;
-    public static File encode(File base, File secret, File encoded) throws OutOfMemoryError{
+    public static File encode(File base, File secret, File encoded, AsyncTask<File, Integer, Boolean> loader) throws OutOfMemoryError{
         pixelRow = 0;
         pixelCol = 0;
         try {
@@ -126,6 +127,7 @@ public class Encoder {
                         incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
+                    double percent = ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100);
                 }
             }
             FileOutputStream out = new FileOutputStream(encoded);
