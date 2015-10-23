@@ -14,18 +14,21 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 
-public class Encoder {
+public class EncoderTask extends AsyncTask<File, Integer, File> {
     public static final int OVERHEAD_SIZE = 32;
     private static int pixelRow;
     private static int pixelCol;
-    public static File encode(File base, File secret, File encoded, AsyncTask<File, Integer, Boolean> loader) throws OutOfMemoryError{
+
+    @Override
+    protected File doInBackground(File... params) {
         pixelRow = 0;
         pixelCol = 0;
         try {
-            Bitmap buffer = BitmapFactory.decodeFile(base.getPath()).copy(Bitmap.Config.ARGB_8888, true);
-            byte[] byteArray = new byte[(int) secret.length()];
+            Bitmap buffer = BitmapFactory.decodeFile(params[0].getPath()).copy(Bitmap.Config
+                    .ARGB_8888, true);
+            byte[] byteArray = new byte[(int) params[1].length()];
             try {
-                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(secret));
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[1]));
                 buf.read(byteArray, 0, byteArray.length);
                 buf.close();
             } catch (Exception e) {
@@ -34,7 +37,7 @@ public class Encoder {
 
             int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
             if (numBitsPossible < ((byteArray.length * 8) + OVERHEAD_SIZE)) {
-                return EndEncoder.encode(base, secret, encoded);
+                return EndEncoder.encode(params[0], params[1], params[2]);
             }
             byte[] overhead = ByteBuffer.allocate(4).putInt(byteArray.length).array();
 
@@ -130,7 +133,7 @@ public class Encoder {
                     double percent = ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100);
                 }
             }
-            FileOutputStream out = new FileOutputStream(encoded);
+            FileOutputStream out = new FileOutputStream(params[2]);
             buffer.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
@@ -139,8 +142,24 @@ public class Encoder {
         } catch (Exception e) {
             Log.wtf("Goober", e.getMessage());
         }
-        return encoded;
+        return params[2];
     }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected void onPostExecute(File file) {
+        super.onPostExecute(file);
+    }
+
     private static void incrementPixel(int length) {
         pixelCol++;
         if (pixelCol == length) {

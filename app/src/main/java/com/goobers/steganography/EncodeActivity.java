@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -122,11 +123,9 @@ public class EncodeActivity extends Activity {
     public void encodeImage(View v) {
         if (baseImage != null && secretImage != null) {
             try {
-                Toast toast = Toast.makeText(getApplicationContext(), "This will take a few seconds",
-                        Toast.LENGTH_SHORT);
-                toast.show();
                 baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
-                File encoded = Encoder.encode(baseImage, secretImage, encodedTempImage);
+                AsyncTask<File, Integer, File> thread = new EncodeTask().execute(baseImage,
+                        secretImage, encodedTempImage);
                 Intent intent = new Intent(this, ImageActivity.class);
                 intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
                 startActivity(intent);

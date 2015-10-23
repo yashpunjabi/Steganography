@@ -87,7 +87,7 @@ public class EndEncoder {
         } catch (OutOfMemoryError e) {
             throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
-            return Encoder.decode(file, decoded);
+            return EncoderTask.decode(file, decoded);
         }
         return decoded;
     }
