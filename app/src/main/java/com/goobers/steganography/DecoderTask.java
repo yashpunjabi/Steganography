@@ -14,12 +14,16 @@ import java.io.FileOutputStream;
  */
 public class DecoderTask extends AsyncTask<File, Integer, File> {
 
+    private int pixelRow;
+    private int pixelCol;
+
     @Override
     protected File doInBackground(File... params) {
         pixelCol = 0;
         pixelRow = 0;
         try {
-            Bitmap buffer = BitmapFactory.decodeFile(image.getPath()).copy(Bitmap.Config.ARGB_8888, true);
+            Bitmap buffer = BitmapFactory.decodeFile(params[0].getPath()).copy(Bitmap.Config
+                    .ARGB_8888, true);
             int numBytes = 0x0;
 
             for (int i = 0; i < 32; i++) {
@@ -64,16 +68,14 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                 byteArray[i] = (byte) current;
             }
 
-            FileOutputStream out = new FileOutputStream(decoded);
+            FileOutputStream out = new FileOutputStream(params[1]);
             out.write(byteArray);
             out.flush();
             out.close();
-        } catch (OutOfMemoryError e) {
-            throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
             Log.wtf("Goober", e.getMessage());
         }
-        return decoded;
+        return params[1];
     }
 
     @Override
@@ -89,5 +91,13 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
+    }
+
+    private void incrementPixel(int length) {
+        pixelCol++;
+        if (pixelCol == length) {
+            pixelCol = 0;
+            pixelRow++;
+        }
     }
 }

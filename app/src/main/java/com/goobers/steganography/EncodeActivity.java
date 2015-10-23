@@ -126,9 +126,6 @@ public class EncodeActivity extends Activity {
                 baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
                 AsyncTask<File, Integer, File> thread = new EncoderTask().execute(baseImage,
                         secretImage, encodedTempImage);
-                Intent intent = new Intent(this, ImageActivity.class);
-                intent.putExtra(EXTRA_FILE_TAG, encoded.getPath());
-                startActivity(intent);
             } catch (OutOfMemoryError e) {
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
                         .LENGTH_SHORT);

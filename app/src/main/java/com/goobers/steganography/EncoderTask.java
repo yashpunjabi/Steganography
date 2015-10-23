@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 
 
 public class EncoderTask extends AsyncTask<File, Integer, File> {
-    public final int OVERHEAD_SIZE = 32;
+    public static final int OVERHEAD_SIZE = 32;
     private int pixelRow;
     private int pixelCol;
 
