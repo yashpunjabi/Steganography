@@ -130,7 +130,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                         incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
-                    double percent = ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100);
+                    publishProgress((int)((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
                 }
             }
             FileOutputStream out = new FileOutputStream(params[2]);
@@ -167,4 +167,5 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             pixelRow++;
         }
     }
+
 }
