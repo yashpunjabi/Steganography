@@ -36,7 +36,8 @@
         android:layout_height="fill_parent"
         android:id="@+id/imageViewBase"
         android:layout_above="@+id/button_get_image1"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/progressBar" />
 
     <ImageView
         android:layout_width="fill_parent"
@@ -58,5 +59,14 @@
         app:button_colorPressed="@color/fab_material_pink_900"
         app:rippleEffect_enabled="true"
         />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress_bar_encode"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
 
 </RelativeLayout>

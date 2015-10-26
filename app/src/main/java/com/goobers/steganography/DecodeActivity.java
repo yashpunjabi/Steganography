@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -105,7 +108,14 @@ public class DecodeActivity extends Activity {
                     .LENGTH_SHORT).show();
         } else {
             try {
-                new DecoderTask(this).execute(image, decoded);
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_decode);
+                progressBar.setProgress(0);
+                int pink = R.color.fab_material_pink_500;
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(pink),
+                        PorterDuff.Mode.SRC_IN);
+                progressBar.getProgressDrawable().setColorFilter(getResources().getColor(pink),
+                        PorterDuff.Mode.SRC_IN);
+                new DecoderTask(this, progressBar).execute(image, decoded);
             } catch (OutOfMemoryError e) {
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
                         .LENGTH_SHORT);

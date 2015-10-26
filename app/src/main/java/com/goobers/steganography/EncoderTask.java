@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,12 +22,14 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
     private static final String LOG_TAG = EncoderTask.class.getSimpleName();
 
     private Context context;
+    private ProgressBar progressBar;
     public static final int OVERHEAD_SIZE = 32;
     private int pixelRow;
     private int pixelCol;
 
-    public EncoderTask(Context context) {
+    public EncoderTask(Context context, ProgressBar progressBar) {
         this.context = context;
+        this.progressBar = progressBar;
     }
 
     @Override
@@ -164,7 +167,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-
+        progressBar.setProgress(values[0]);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.software.shell.fab.ActionButton;
 
@@ -160,7 +162,15 @@ public class EncodeActivity extends Activity {
         if (baseImage != null && secretImage != null) {
             try {
                 Log.v(LOG_TAG, "sending image to encoder");
-                new EncoderTask(this).execute(baseImage, secretImage, encodedTempImage);
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_encode);
+                progressBar.setProgress(0);
+                int pink = R.color.fab_material_pink_500;
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(pink),
+                        PorterDuff.Mode.SRC_IN);
+                progressBar.getProgressDrawable().setColorFilter(getResources().getColor(pink),
+                        PorterDuff.Mode.SRC_IN);
+                new EncoderTask(this, progressBar).execute(baseImage, secretImage,
+                        encodedTempImage);
             } catch (OutOfMemoryError e) {
                 Log.e(LOG_TAG, "exception", e);
             }
