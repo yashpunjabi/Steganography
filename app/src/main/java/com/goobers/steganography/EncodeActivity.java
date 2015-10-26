@@ -3,6 +3,7 @@ package com.goobers.steganography;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,7 +38,7 @@ public class EncodeActivity extends Activity {
         ActionButton actionButton = (ActionButton) findViewById(R.id.fab_encode);
         actionButton.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
 
-        encodedTempImage = new File(getFilesDir(), "temp.png");
+        encodedTempImage = new File(getCacheDir(), "temp.png");
         baseView = (ImageView) findViewById(R.id.imageViewBase);
         secretView = (ImageView) findViewById(R.id.imageViewSecret);
     }
@@ -93,14 +94,46 @@ public class EncodeActivity extends Activity {
             }
             if (isBase) {
                 baseImage = new File(selectedImagePath);
-                baseView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                baseView.setImageBitmap(decodeBitmapScaledDown(selectedImagePath));
             } else {
                 secretImage = new File(selectedImagePath);
-                secretView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                secretView.setImageBitmap(decodeBitmapScaledDown(selectedImagePath));
             }
         }
     }
 
+    private Bitmap decodeBitmapScaledDown(String filePath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+
+        //for later use
+        //String imageType = options.outMimeType;
+
+        int reqHeight = secretView.getMaxHeight();
+        int reqWidth = secretView.getMaxWidth();
+
+        int inSampleSize = 1;
+
+        if (imageHeight > reqHeight || imageWidth > reqWidth) {
+
+            final int halfHeight = imageHeight / 2;
+            final int halfWidth = imageWidth / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filePath, options);
+    }
 
     public String getPath(Uri uri) {
         // just some safety built in
@@ -126,7 +159,7 @@ public class EncodeActivity extends Activity {
     public void encodeImage(View v) {
         if (baseImage != null && secretImage != null) {
             try {
-                baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
+                baseImage = FileUtils.convert(baseImage, getCacheDir().getPath());
                 Log.v(LOG_TAG, "sending image to encoder");
                 new EncoderTask(this).execute(baseImage, secretImage, encodedTempImage);
             } catch (OutOfMemoryError e) {

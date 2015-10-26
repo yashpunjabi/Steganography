@@ -30,7 +30,7 @@ public class DecodeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decode);
-        decoded = new File(getFilesDir(), "temp.png");
+        decoded = new File(getCacheDir(), "temp.png");
         decodedView = (ImageView) findViewById(R.id.imageViewDecode);
     }
 
