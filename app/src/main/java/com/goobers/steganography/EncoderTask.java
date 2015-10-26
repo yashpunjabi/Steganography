@@ -1,6 +1,8 @@
 package com.goobers.steganography;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,9 +17,15 @@ import java.nio.ByteBuffer;
 
 
 public class EncoderTask extends AsyncTask<File, Integer, File> {
+
+    private Context context;
     public static final int OVERHEAD_SIZE = 32;
     private int pixelRow;
     private int pixelCol;
+
+    public EncoderTask(Context context) {
+        this.context = context;
+    }
 
     @Override
     protected File doInBackground(File... params) {
@@ -157,7 +165,8 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onPostExecute(File file) {
-        super.onPostExecute(file);
+        Intent intent = new Intent(this.context, ImageActivity.class);
+        context.startActivity(intent);
     }
 
     private void incrementPixel(int length) {
