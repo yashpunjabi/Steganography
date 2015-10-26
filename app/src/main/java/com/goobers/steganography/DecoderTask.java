@@ -121,9 +121,11 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                         incrementPixel(buffer.getWidth());
                     }
                     bitcount++;
-                    publishProgress((int)((((double) bitcount) / ((double) (byteArray.length * 8))) * 100));
                 }
                 byteArray[i] = (byte) current;
+                if (i % 1024 == 0) {
+                    publishProgress((int)((((double) bitcount) / ((double) (byteArray.length * 8))) * 100));
+                }
             }
 
             FileOutputStream out = new FileOutputStream(params[1]);

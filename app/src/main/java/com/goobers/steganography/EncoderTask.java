@@ -142,7 +142,9 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                         incrementPixel(buffer.getWidth());
                     }
                     bitCount++;
-                    publishProgress((int)((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
+                }
+                if (i % 1024 == 0) {
+                    publishProgress((int) ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
                 }
             }
             Log.v(LOG_TAG, "encoded image");
