@@ -159,7 +159,6 @@ public class EncodeActivity extends Activity {
     public void encodeImage(View v) {
         if (baseImage != null && secretImage != null) {
             try {
-                baseImage = FileUtils.convert(baseImage, getCacheDir().getPath());
                 Log.v(LOG_TAG, "sending image to encoder");
                 new EncoderTask(this).execute(baseImage, secretImage, encodedTempImage);
             } catch (OutOfMemoryError e) {
