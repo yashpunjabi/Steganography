@@ -8,8 +8,11 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * Created by yash on 10/23/15.
@@ -27,6 +30,45 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected File doInBackground(File... params) {
+        byte[] bytes;
+        try {
+
+            bytes = new byte[(int) params[0].length()];
+            try {
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[0]));
+                buf.read(bytes, 0, bytes.length);
+                buf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            int count = 8;
+            int size = ByteBuffer.wrap(bytes).getInt(8);
+            count += size + 12;
+            while(ByteBuffer.wrap(bytes).getInt(count + 4) != 0x49454E44) {
+                count += ByteBuffer.wrap(bytes).getInt(count) + 12;
+            }
+            count += 12;
+            size = ByteBuffer.wrap(bytes).getInt(count);
+            byte[] decodedBytes = new byte[size];
+            count += 4;
+            for (int i = 0; i < size; i++) {
+                decodedBytes[i] = bytes[count];
+                count++;
+            }
+            FileOutputStream out = new FileOutputStream(params[1]);
+            out.write(decodedBytes);
+            out.flush();
+            out.close();
+        } catch (OutOfMemoryError e) {
+            throw new OutOfMemoryError("Not Enough RAM");
+        } catch (Exception e) {
+            return decode(params);
+        }
+        return params[1];
+    }
+
+    private File decode(File... params) {
         pixelCol = 0;
         pixelRow = 0;
         try {
