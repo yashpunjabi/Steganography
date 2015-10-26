@@ -94,15 +94,15 @@ public class EncodeActivity extends Activity {
             }
             if (isBase) {
                 baseImage = new File(selectedImagePath);
-                baseView.setImageBitmap(decodeBitmapScaledDown(selectedImagePath));
+                baseView.setImageBitmap(decodeBitmapScaledDown(secretView, selectedImagePath));
             } else {
                 secretImage = new File(selectedImagePath);
-                secretView.setImageBitmap(decodeBitmapScaledDown(selectedImagePath));
+                secretView.setImageBitmap(decodeBitmapScaledDown(secretView, selectedImagePath));
             }
         }
     }
 
-    private Bitmap decodeBitmapScaledDown(String filePath) {
+    public static Bitmap decodeBitmapScaledDown(ImageView imageView, String filePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
@@ -112,8 +112,8 @@ public class EncodeActivity extends Activity {
         //for later use
         //String imageType = options.outMimeType;
 
-        int reqHeight = secretView.getMaxHeight();
-        int reqWidth = secretView.getMaxWidth();
+        int reqHeight = imageView.getMaxHeight();
+        int reqWidth = imageView.getMaxWidth();
 
         int inSampleSize = 1;
 

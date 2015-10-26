@@ -74,7 +74,7 @@ public class DecodeActivity extends Activity {
                 selectedImagePath = getPath(selectedImageUri);
             }
             image = new File(selectedImagePath);
-            decodedView.setImageBitmap(BitmapFactory.decodeFile(selectedImagePath));
+            decodedView.setImageBitmap(EncodeActivity.decodeBitmapScaledDown(decodedView, selectedImagePath));
         }
     }
 
