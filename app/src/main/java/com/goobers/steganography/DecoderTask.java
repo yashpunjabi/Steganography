@@ -41,8 +41,9 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                 buf.read(bytes, 0, bytes.length);
                 buf.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "exception", e);
             }
+            Log.v(LOG_TAG, "read into byte array");
 
             int count = 8;
             int size = ByteBuffer.wrap(bytes).getInt(8);
@@ -62,6 +63,7 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             out.write(decodedBytes);
             out.flush();
             out.close();
+            Log.v(LOG_TAG, "done decoding");
         } catch (OutOfMemoryError e) {
             throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
@@ -71,6 +73,8 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
     }
 
     private File decode(File... params) {
+        Log.v(LOG_TAG, "decoding using steg method");
+
         pixelCol = 0;
         pixelRow = 0;
         try {
@@ -94,6 +98,7 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                     incrementPixel(buffer.getWidth());
                 }
             }
+            Log.v(LOG_TAG, "got number of bytes from overhead");
 
             incrementPixel(buffer.getWidth());
             int bitcount = 0;
@@ -125,6 +130,8 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             out.write(byteArray);
             out.flush();
             out.close();
+            Log.v(LOG_TAG, "finished decoding");
+
         } catch (Exception e)  {
             Log.e(LOG_TAG, "exception" ,e);
         }

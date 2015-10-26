@@ -44,6 +44,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             } catch (Exception e) {
                 Log.e(LOG_TAG, "exception", e);
             }
+            Log.v(LOG_TAG, "read into byte array");
 
             int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
             if (numBitsPossible < ((byteArray.length * 8) + OVERHEAD_SIZE)) {
@@ -96,7 +97,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                 }
             }
             incrementPixel(buffer.getWidth());
-
+            Log.v(LOG_TAG, "encoded overhead");
 
             bitCount = 0;
             for (int i = 0; i < byteArray.length; i++) {
@@ -143,6 +144,8 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                     publishProgress((int)((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
                 }
             }
+            Log.v(LOG_TAG, "encoded image");
+
             FileOutputStream out = new FileOutputStream(params[2]);
             buffer.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
@@ -150,8 +153,9 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         } catch (OutOfMemoryError e) {
             throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
-            Log.wtf(LOG_TAG, e.getMessage());
+            Log.e(LOG_TAG, "exception", e);
         }
+        Log.v(LOG_TAG, "done encoding");
         return params[2];
     }
 
