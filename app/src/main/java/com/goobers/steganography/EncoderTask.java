@@ -45,7 +45,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
 
             int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
             if (numBitsPossible < ((byteArray.length * 8) + OVERHEAD_SIZE)) {
-                return EndEncoder.encode(params[0], params[1], params[2]);
+                return endEncode(params);
             }
             byte[] overhead = ByteBuffer.allocate(4).putInt(byteArray.length).array();
 
@@ -175,6 +175,53 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             pixelCol = 0;
             pixelRow++;
         }
+    }
+
+    private File endEncode(File... params) {
+        try {
+            byte[] imageBinary = new byte[(int) params[0].length()];
+            try {
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[0]));
+                buf.read(imageBinary, 0, imageBinary.length);
+                buf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            byte[] toEncodeBinary = new byte[(int) params[1].length()];
+            try {
+                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[1]));
+                buf.read(toEncodeBinary, 0, toEncodeBinary.length);
+                buf.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            byte[] bytes = new byte[imageBinary.length + toEncodeBinary.length + 4];
+            byte[] length = ByteBuffer.allocate(4).putInt(toEncodeBinary.length).array();
+            int count = 0;
+            for (byte element: imageBinary) {
+                bytes[count] = element;
+                count++;
+            }
+            for (byte element: length) {
+                bytes[count] = element;
+                count++;
+            }
+            for (byte element: toEncodeBinary) {
+                bytes[count] = element;
+                count++;
+            }
+            FileOutputStream out = new FileOutputStream(params[2]);
+            out.write(bytes);
+            out.flush();
+            out.close();
+        } catch (OutOfMemoryError e) {
+            throw new OutOfMemoryError("Not Enough RAM");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return params[2];
     }
 
 }
