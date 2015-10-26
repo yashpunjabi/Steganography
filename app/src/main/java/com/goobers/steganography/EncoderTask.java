@@ -34,6 +34,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         pixelRow = 0;
         pixelCol = 0;
         try {
+            params[0] = FileUtils.convert(params[0], context.getCacheDir().getPath());
             Bitmap buffer = BitmapFactory.decodeFile(params[0].getPath()).copy(Bitmap.Config
                     .ARGB_8888, true);
             byte[] byteArray = new byte[(int) params[1].length()];

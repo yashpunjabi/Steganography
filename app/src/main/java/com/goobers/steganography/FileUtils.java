@@ -24,7 +24,7 @@ public class FileUtils {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, "exception", e);
         }
         return temp;
     }
