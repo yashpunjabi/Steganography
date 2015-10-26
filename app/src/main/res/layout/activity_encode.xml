@@ -37,7 +37,7 @@
         android:id="@+id/imageViewBase"
         android:layout_above="@+id/button_get_image1"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/progressBar" />
+        android:layout_below="@+id/progress_bar_encode" />
 
     <ImageView
         android:layout_width="fill_parent"
