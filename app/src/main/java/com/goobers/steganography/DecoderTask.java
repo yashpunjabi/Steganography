@@ -154,7 +154,7 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
+
     }
 
     private void incrementPixel(int length) {

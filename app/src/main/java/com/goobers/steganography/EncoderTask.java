@@ -164,7 +164,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
+
     }
 
     @Override
@@ -195,7 +195,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                 buf.read(imageBinary, 0, imageBinary.length);
                 buf.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "exception", e);
             }
 
             byte[] toEncodeBinary = new byte[(int) params[1].length()];
@@ -204,7 +204,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                 buf.read(toEncodeBinary, 0, toEncodeBinary.length);
                 buf.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "exception", e);
             }
 
             byte[] bytes = new byte[imageBinary.length + toEncodeBinary.length + 4];
