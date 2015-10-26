@@ -18,6 +18,8 @@ import java.nio.ByteBuffer;
 
 public class EncoderTask extends AsyncTask<File, Integer, File> {
 
+    private static final String LOG_TAG = EncoderTask.class.getSimpleName();
+
     private Context context;
     public static final int OVERHEAD_SIZE = 32;
     private int pixelRow;
@@ -40,7 +42,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                 buf.read(byteArray, 0, byteArray.length);
                 buf.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "exception", e);
             }
 
             int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
@@ -148,7 +150,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
         } catch (OutOfMemoryError e) {
             throw new OutOfMemoryError("Not Enough RAM");
         } catch (Exception e) {
-            Log.wtf("Goober", e.getMessage());
+            Log.wtf(LOG_TAG, e.getMessage());
         }
         return params[2];
     }

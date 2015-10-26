@@ -19,6 +19,8 @@ import java.util.Calendar;
 
 public class ImageActivity extends Activity {
 
+    private static final String LOG_TAG = ImageActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +43,7 @@ public class ImageActivity extends Activity {
             fos.flush();
             fos.close();
         } catch (Exception e) {
-            Log.e("GOOBER GOOBER GOOBER", e.getMessage());
+            Log.e(LOG_TAG, e.getMessage());
         }
     }
 

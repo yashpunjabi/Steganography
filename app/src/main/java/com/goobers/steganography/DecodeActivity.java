@@ -20,6 +20,8 @@ import java.io.File;
 
 public class DecodeActivity extends Activity {
 
+    private static final String LOG_TAG = DecodeActivity.class.getSimpleName();
+
     private File image;
     private File decoded;
     private ImageView decodedView;
@@ -103,10 +105,7 @@ public class DecodeActivity extends Activity {
                     .LENGTH_SHORT).show();
         } else {
             try {
-                decoded = EndEncoder.decode(image, decoded);
-                Intent intent = new Intent(this, ImageActivity.class);
-                intent.putExtra(DECODED_FILE_PATH, decoded.getPath());
-                startActivity(intent);
+                new DecoderTask(this).execute(image, decoded);
             } catch (OutOfMemoryError e) {
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
                         .LENGTH_SHORT);

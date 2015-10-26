@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.software.shell.fab.ActionButton;
 import java.io.File;
 
 public class EncodeActivity extends Activity {
+
+    private static final String LOG_TAG = EncodeActivity.class.getSimpleName();
 
     private File baseImage;
     private boolean isBase = true;
@@ -124,12 +127,11 @@ public class EncodeActivity extends Activity {
         if (baseImage != null && secretImage != null) {
             try {
                 baseImage = FileUtils.convert(baseImage, getFilesDir().getPath());
+                Log.v(LOG_TAG, "sending image to encoder");
                 new EncoderTask(this).execute(baseImage,
                         secretImage, encodedTempImage);
             } catch (OutOfMemoryError e) {
-                Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
-                        .LENGTH_SHORT);
-                toast.show();
+                Log.e(LOG_TAG, "exception", e);
             }
         } else {
             Toast toast = Toast.makeText(getApplicationContext(), "You need two images", Toast

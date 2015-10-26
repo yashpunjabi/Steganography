@@ -14,6 +14,8 @@ import java.net.URLConnection;
 
 public class FileUtils {
 
+    private static final String LOG_TAG = FileUtils.class.getSimpleName();
+
     public static File convert(File file, String fileDir) {
         Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
         File temp = new File(fileDir, "conversion.png");

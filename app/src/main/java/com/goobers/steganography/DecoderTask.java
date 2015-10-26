@@ -19,6 +19,8 @@ import java.nio.ByteBuffer;
  */
 public class DecoderTask extends AsyncTask<File, Integer, File> {
 
+    private static final String LOG_TAG = DecoderTask.class.getSimpleName();
+
     private Context context;
     private int pixelRow;
     private int pixelCol;
@@ -123,8 +125,8 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             out.write(byteArray);
             out.flush();
             out.close();
-        } catch (Exception e) {
-            Log.wtf("Goober", e.getMessage());
+        } catch (Exception e)  {
+            Log.e(LOG_TAG, "exception" ,e);
         }
         return params[1];
     }
