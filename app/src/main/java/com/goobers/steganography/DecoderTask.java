@@ -58,6 +58,9 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             for (int i = 0; i < size; i++) {
                 decodedBytes[i] = bytes[count];
                 count++;
+                if (i % 1024 == 0) {
+                    publishProgress((int)((((double) i) / ((double) (size))) * 100));
+                }
             }
             FileOutputStream out = new FileOutputStream(params[1]);
             out.write(decodedBytes);
