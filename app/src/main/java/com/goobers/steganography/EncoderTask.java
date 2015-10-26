@@ -213,18 +213,22 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             byte[] bytes = new byte[imageBinary.length + toEncodeBinary.length + 4];
             byte[] length = ByteBuffer.allocate(4).putInt(toEncodeBinary.length).array();
             int count = 0;
+            onProgressUpdate(0);
             for (byte element: imageBinary) {
                 bytes[count] = element;
                 count++;
             }
+            onProgressUpdate(49);
             for (byte element: length) {
                 bytes[count] = element;
                 count++;
             }
+            onProgressUpdate(50);
             for (byte element: toEncodeBinary) {
                 bytes[count] = element;
                 count++;
             }
+            onProgressUpdate(99);
             FileOutputStream out = new FileOutputStream(params[2]);
             out.write(bytes);
             out.flush();
