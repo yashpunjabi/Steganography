@@ -1,5 +1,7 @@
 package com.goobers.steganography;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -14,8 +16,14 @@ import java.io.FileOutputStream;
  */
 public class DecoderTask extends AsyncTask<File, Integer, File> {
 
+    private Context context;
     private int pixelRow;
     private int pixelCol;
+
+
+    public DecoderTask(Context context) {
+        this.context = context;
+    }
 
     @Override
     protected File doInBackground(File... params) {
@@ -86,7 +94,9 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onPostExecute(File file) {
-        super.onPostExecute(file);
+        Intent intent = new Intent(this.context, ImageActivity.class);
+        intent.putExtra(EncodeActivity.EXTRA_FILE_TAG, file.getPath());
+        context.startActivity(intent);
     }
 
     @Override

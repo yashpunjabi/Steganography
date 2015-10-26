@@ -166,6 +166,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
     @Override
     protected void onPostExecute(File file) {
         Intent intent = new Intent(this.context, ImageActivity.class);
+        intent.putExtra(EncodeActivity.EXTRA_FILE_TAG, file.getPath());
         context.startActivity(intent);
     }
 
