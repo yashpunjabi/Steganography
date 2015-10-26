@@ -121,7 +121,6 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                         incrementPixel(buffer.getWidth());
                     }
                     bitcount++;
-                    publishProgress((int)((((double) bitcount) / ((double) (byteArray.length * 8))) * 100));
                 }
                 byteArray[i] = (byte) current;
             }
@@ -152,7 +151,7 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
+
     }
 
     private void incrementPixel(int length) {
