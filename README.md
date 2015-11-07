@@ -9,11 +9,11 @@ Encoding Screen
 
 ![Encoding Screen1](./readme_res/Screenshot_2015-10-18-09-45-55.png)
 
-![Encoding Screen2](./readme_res/Screenshot_2015-10-18-09-45-23.png)
+![Encoding Screen2](./readme_res/Screenshot_2015-10-18-09-46-23.png)
 
 Encoded Image
 
-![Encoded Image](./readme_res/Screenshot_2015-10-18-09-45-39.png)
+![Encoded Image](./readme_res/Screenshot_2015-10-18-09-46-39.png)
 
 Back to the Initial Screen
 
