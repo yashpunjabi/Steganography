@@ -1,5 +1,7 @@
 # SteganographyAndroid
-An android app to hide files within other files
+An android app to hide files within other files.
+
+Select a base image and a secret image to hide within that base image. The app will give you an image file that looks and behaves like the base image would. Send this file to someone you want to share the secret image with. They then run the file through the apps decoder to retrieve the secret image. To anyone else, the file just looks like the base image.
 
 Initial Screen
 
