@@ -1,5 +1,6 @@
 package com.goobers.steganography;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,12 +24,12 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
     private static final String LOG_TAG = DecoderTask.class.getSimpleName();
 
     private Context context;
-    private ProgressBar progressBar;
+    private ProgressDialog progressBar;
     private int pixelRow;
     private int pixelCol;
 
 
-    public DecoderTask(Context context, ProgressBar progressBar) {
+    public DecoderTask(Context context, ProgressDialog progressBar) {
         this.context = context;
         this.progressBar = progressBar;
     }
@@ -61,9 +62,6 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             for (int i = 0; i < size; i++) {
                 decodedBytes[i] = bytes[count];
                 count++;
-                if (i % 1024 == 0) {
-                    publishProgress((int)((((double) i) / ((double) (size))) * 100));
-                }
             }
             FileOutputStream out = new FileOutputStream(params[1]);
             out.write(decodedBytes);
@@ -129,9 +127,6 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                     bitcount++;
                 }
                 byteArray[i] = (byte) current;
-                if (i % 1024 == 0) {
-                    publishProgress((int)((((double) bitcount) / ((double) (byteArray.length *  8))) * 100));
-                }
             }
 
             FileOutputStream out = new FileOutputStream(params[1]);
@@ -139,7 +134,6 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             out.flush();
             out.close();
             Log.v(LOG_TAG, "finished decoding");
-
         } catch (Exception e)  {
             Log.e(LOG_TAG, "exception" ,e);
         }
@@ -153,14 +147,10 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
     @Override
     protected void onPostExecute(File file) {
+        progressBar.dismiss();
         Intent intent = new Intent(this.context, ImageActivity.class);
         intent.putExtra(EncodeActivity.EXTRA_FILE_TAG, file.getPath());
         context.startActivity(intent);
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        progressBar.setProgress(values[0]);
     }
 
     private void incrementPixel(int length) {

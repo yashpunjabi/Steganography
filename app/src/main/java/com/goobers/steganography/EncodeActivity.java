@@ -1,13 +1,13 @@
 package com.goobers.steganography;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.software.shell.fab.ActionButton;
 
 import java.io.File;
+import java.net.URI;
 
 public class EncodeActivity extends Activity {
 
@@ -27,7 +28,7 @@ public class EncodeActivity extends Activity {
 
     private File baseImage;
     private boolean isBase = true;
-    private File secretImage;
+    private File secretFile;
     private File encodedTempImage;
     private ImageView baseView;
     private ImageView secretView;
@@ -74,10 +75,11 @@ public class EncodeActivity extends Activity {
 
     public void uploadImage2(View v) {
         isBase = false;
-        uploadImage();
+        uploadFile();
     }
 
     public static final int SELECT_PICTURE = 1; //for the result listener
+    public static final int SELECT_FILE = 2;
     private String selectedImagePath;
 
     private void uploadImage() {
@@ -88,18 +90,34 @@ public class EncodeActivity extends Activity {
                 "Select Picture"), SELECT_PICTURE);
     }
 
+    private void uploadFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(Intent.createChooser(intent, "File"), SELECT_FILE);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
                 selectedImagePath = getPath(selectedImageUri);
-            }
-            if (isBase) {
                 baseImage = new File(selectedImagePath);
                 baseView.setImageBitmap(decodeBitmapScaledDown(secretView, selectedImagePath));
-            } else {
-                secretImage = new File(selectedImagePath);
-                secretView.setImageBitmap(decodeBitmapScaledDown(secretView, selectedImagePath));
+            }
+            if (requestCode == SELECT_FILE) {
+                Uri selectedSecretUri = data.getData();
+                try {
+                    Log.e(LOG_TAG, getPath(selectedSecretUri));
+                    secretFile = new File(getPath(selectedSecretUri));
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "exception", e);
+                }
+
+                if (getApplicationContext().getContentResolver().getType(selectedSecretUri)
+                        .contains("image")) {
+                    secretView.setImageBitmap(decodeBitmapScaledDown(secretView, getPath(selectedSecretUri)));
+                }
             }
         }
     }
@@ -156,20 +174,18 @@ public class EncodeActivity extends Activity {
         return uri.getPath();
     }
 
+
     public static final String EXTRA_FILE_TAG = "ENCODED FILE";
 
     public void encodeImage(View v) {
-        if (baseImage != null && secretImage != null) {
+        if (baseImage != null && secretFile != null) {
             try {
                 Log.v(LOG_TAG, "sending image to encoder");
-                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_encode);
-                progressBar.setProgress(0);
-                int pink = R.color.fab_material_pink_500;
-                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(pink),
-                        PorterDuff.Mode.SRC_IN);
-                progressBar.getProgressDrawable().setColorFilter(getResources().getColor(pink),
-                        PorterDuff.Mode.SRC_IN);
-                new EncoderTask(this, progressBar).execute(baseImage, secretImage,
+                ProgressDialog progress = new ProgressDialog(this);
+                progress.setTitle("Encoding");
+                progress.setMessage("This may take a few minutes for large files...");
+                progress.show();
+                new EncoderTask(this, progress).execute(baseImage, secretFile,
                         encodedTempImage);
             } catch (OutOfMemoryError e) {
                 Log.e(LOG_TAG, "exception", e);

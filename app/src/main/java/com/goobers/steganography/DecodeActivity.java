@@ -1,6 +1,7 @@
 package com.goobers.steganography;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -108,14 +109,11 @@ public class DecodeActivity extends Activity {
                     .LENGTH_SHORT).show();
         } else {
             try {
-                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar_decode);
-                progressBar.setProgress(0);
-                int pink = R.color.fab_material_pink_500;
-                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(pink),
-                        PorterDuff.Mode.SRC_IN);
-                progressBar.getProgressDrawable().setColorFilter(getResources().getColor(pink),
-                        PorterDuff.Mode.SRC_IN);
-                new DecoderTask(this, progressBar).execute(image, decoded);
+                ProgressDialog progress = new ProgressDialog(this);
+                progress.setTitle("Decoding");
+                progress.setMessage("This may take a few minutes for large files...");
+                progress.show();
+                new DecoderTask(this, progress).execute(image, decoded);
             } catch (OutOfMemoryError e) {
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast
                         .LENGTH_SHORT);
