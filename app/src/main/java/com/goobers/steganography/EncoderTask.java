@@ -1,6 +1,7 @@
 package com.goobers.steganography;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,12 +23,12 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
     private static final String LOG_TAG = EncoderTask.class.getSimpleName();
 
     private Context context;
-    private ProgressBar progressBar;
+    private ProgressDialog progressBar;
     public static final int OVERHEAD_SIZE = 64;
     private int pixelRow;
     private int pixelCol;
 
-    public EncoderTask(Context context, ProgressBar progressBar) {
+    public EncoderTask(Context context, ProgressDialog progressBar) {
         this.context = context;
         this.progressBar = progressBar;
     }
@@ -163,17 +164,13 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
-        progressBar.setProgress(values[0]);
-    }
-
-    @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
 
     @Override
     protected void onPostExecute(File file) {
+        progressBar.dismiss();
         Intent intent = new Intent(this.context, ImageActivity.class);
         intent.putExtra(EncodeActivity.EXTRA_FILE_TAG, file.getPath());
         context.startActivity(intent);
@@ -210,22 +207,18 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             byte[] bytes = new byte[imageBinary.length + toEncodeBinary.length + 4];
             byte[] length = ByteBuffer.allocate(8).putLong(toEncodeBinary.length).array();
             int count = 0;
-            publishProgress(0);
             for (byte element: imageBinary) {
                 bytes[count] = element;
                 count++;
             }
-            publishProgress(49);
             for (byte element: length) {
                 bytes[count] = element;
                 count++;
             }
-            publishProgress(50);
             for (byte element: toEncodeBinary) {
                 bytes[count] = element;
                 count++;
             }
-            publishProgress(99);
             FileOutputStream out = new FileOutputStream(params[2]);
             out.write(bytes);
             out.flush();
