@@ -23,7 +23,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
 
     private Context context;
     private ProgressBar progressBar;
-    public static final int OVERHEAD_SIZE = 32;
+    public static final int OVERHEAD_SIZE = 64;
     private int pixelRow;
     private int pixelCol;
 
@@ -40,21 +40,13 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             params[0] = FileUtils.convert(params[0], context.getCacheDir().getPath());
             Bitmap buffer = BitmapFactory.decodeFile(params[0].getPath()).copy(Bitmap.Config
                     .ARGB_8888, true);
-            byte[] byteArray = new byte[(int) params[1].length()];
-            try {
-                BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[1]));
-                buf.read(byteArray, 0, byteArray.length);
-                buf.close();
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "exception", e);
-            }
-            Log.v(LOG_TAG, "read into byte array");
+            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(params[1]));
 
             int numBitsPossible = ((buffer.getHeight() * buffer.getWidth()) * 3);
-            if (numBitsPossible < ((byteArray.length * 8) + OVERHEAD_SIZE)) {
+            if (numBitsPossible < ((params[1].length() * 8) + OVERHEAD_SIZE)) {
                 return endEncode(params);
             }
-            byte[] overhead = ByteBuffer.allocate(4).putInt(byteArray.length).array();
+            byte[] overhead = ByteBuffer.allocate(8).putLong(params[1].length()).array();
 
             int bitCount = 0;
             for (int i = 0; i < overhead.length; i++) {
@@ -104,8 +96,10 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             Log.v(LOG_TAG, "encoded overhead");
 
             bitCount = 0;
-            for (int i = 0; i < byteArray.length; i++) {
-                byte currentByte = byteArray[i];
+            int i = 0;
+            int val = stream.read();
+            while(val != -1) {
+                byte currentByte = (byte)val;
                 for (int j = 7; j >= 0; j--) {
                     int bit = (currentByte & (0x1 << j)) >> j;
                     bit = bit & 0x1;
@@ -147,9 +141,12 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
                     bitCount++;
                 }
                 if (i % 1024 == 0) {
-                    publishProgress((int) ((((double) bitCount) / ((double) (byteArray.length * 8))) * 100));
+                    publishProgress((int) ((((double) bitCount) / ((double) (params[1].length() * 8))) * 100));
                 }
+                val = stream.read();
+                i++;
             }
+            Log.v(LOG_TAG, "num bytes encoded:" + i);
             Log.v(LOG_TAG, "encoded image");
 
             FileOutputStream out = new FileOutputStream(params[2]);
@@ -211,7 +208,7 @@ public class EncoderTask extends AsyncTask<File, Integer, File> {
             }
 
             byte[] bytes = new byte[imageBinary.length + toEncodeBinary.length + 4];
-            byte[] length = ByteBuffer.allocate(4).putInt(toEncodeBinary.length).array();
+            byte[] length = ByteBuffer.allocate(8).putLong(toEncodeBinary.length).array();
             int count = 0;
             publishProgress(0);
             for (byte element: imageBinary) {

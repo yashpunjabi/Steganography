@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.ProgressBar;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
     protected File doInBackground(File... params) {
         byte[] bytes;
         try {
-
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(params[1]));
             bytes = new byte[(int) params[0].length()];
             try {
                 BufferedInputStream buf = new BufferedInputStream(new FileInputStream(params[0]));
@@ -49,24 +50,23 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
             Log.v(LOG_TAG, "read into byte array");
 
             int count = 8;
-            int size = ByteBuffer.wrap(bytes).getInt(8);
+            long size = ByteBuffer.wrap(bytes).getInt(8);
             count += size + 12;
             while(ByteBuffer.wrap(bytes).getInt(count + 4) != 0x49454E44) {
                 count += ByteBuffer.wrap(bytes).getInt(count) + 12;
             }
             count += 12;
-            size = ByteBuffer.wrap(bytes).getInt(count);
-            byte[] decodedBytes = new byte[size];
+            size = ByteBuffer.wrap(bytes).getLong(count);
             count += 4;
             for (int i = 0; i < size; i++) {
-                decodedBytes[i] = bytes[count];
+                out.write(bytes[count]);
                 count++;
                 if (i % 1024 == 0) {
                     publishProgress((int)((((double) i) / ((double) (size))) * 100));
                 }
             }
-            FileOutputStream out = new FileOutputStream(params[1]);
-            out.write(decodedBytes);
+
+
             out.flush();
             out.close();
             Log.v(LOG_TAG, "done decoding");
@@ -84,22 +84,23 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
         pixelCol = 0;
         pixelRow = 0;
         try {
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(params[1]));
             Bitmap buffer = BitmapFactory.decodeFile(params[0].getPath()).copy(Bitmap.Config
                     .ARGB_8888, true);
-            int numBytes = 0x0;
+            long numBytes = 0x0;
 
-            for (int i = 0; i < 32; i++) {
+            for (int i = 0; i < 64; i++) {
                 if (i % 3 == 0) {
                     if ((Color.red(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
+                        numBytes = numBytes | (0x1 << (63 - i));
                     }
                 } else if (i % 3 == 1) {
                     if ((Color.blue(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
+                        numBytes = numBytes | (0x1 << (63 - i));
                     }
                 } else {
                     if ((Color.green(buffer.getPixel(pixelCol, pixelRow)) & 0x1) == 0x1) {
-                        numBytes = numBytes | (0x1 << (31 - i));
+                        numBytes = numBytes | (0x1 << (63 - i));
                     }
                     incrementPixel(buffer.getWidth());
                 }
@@ -108,7 +109,6 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
 
             incrementPixel(buffer.getWidth());
             int bitcount = 0;
-            byte[] byteArray = new byte[numBytes];
             for (int i = 0; i < numBytes; i++) {
                 int current = 0;
                 for (int j = 7; j >= 0; j--) {
@@ -128,14 +128,12 @@ public class DecoderTask extends AsyncTask<File, Integer, File> {
                     }
                     bitcount++;
                 }
-                byteArray[i] = (byte) current;
+                out.write(current);
                 if (i % 1024 == 0) {
-                    publishProgress((int)((((double) bitcount) / ((double) (byteArray.length *  8))) * 100));
+                    publishProgress((int)((((double) bitcount) / ((double) (numBytes *  8))) * 100));
                 }
             }
 
-            FileOutputStream out = new FileOutputStream(params[1]);
-            out.write(byteArray);
             out.flush();
             out.close();
             Log.v(LOG_TAG, "finished decoding");
